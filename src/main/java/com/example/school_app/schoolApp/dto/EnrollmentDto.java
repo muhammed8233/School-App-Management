@@ -11,6 +11,7 @@ public class EnrollmentDto {
     public EnrollmentDto(Long studentId, Long courseId) {
         this.studentId = studentId;
         this.courseId = courseId;
+
     }
 
 
