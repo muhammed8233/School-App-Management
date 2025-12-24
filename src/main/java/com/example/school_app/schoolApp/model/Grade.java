@@ -45,11 +45,11 @@ public class Grade {
         this.enrollment = enrollment;
     }
 
-    public com.example.school_app.schoolApp.Enum.Assessment getAssessmentType() {
+    public Assessment getAssessmentType() {
         return assessmentType;
     }
 
-    public void setAssessmentType(com.example.school_app.schoolApp.Enum.Assessment assessmentType) {
+    public void setAssessmentType(Assessment assessmentType) {
         this.assessmentType = assessmentType;
     }
 
