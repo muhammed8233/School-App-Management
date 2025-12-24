@@ -17,10 +17,10 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class CourseServiceTest {
+class CourseServiceImplTest {
 
     @Autowired
-    private CourseService courseService;
+    private CourseServiceImpl courseServiceImpl;
     @Autowired
     private CourseRepository courseRepository;
 
@@ -33,8 +33,8 @@ class CourseServiceTest {
     @Test
     void testToVerifyCourse(){
         CourseDto courseDto = new CourseDto("physic","phy101");
-         courseService.addNewCourse(courseDto);
-         List<CourseDto> courses = courseService.getAllCoursesAsDto();
+         courseServiceImpl.addNewCourse(courseDto);
+         List<CourseDto> courses = courseServiceImpl.getAllCoursesAsDto();
 
 
         assertNotNull(courses);
@@ -48,9 +48,9 @@ class CourseServiceTest {
         CourseDto course = new CourseDto("chemistry","chm101");
         CourseDto course1 = new CourseDto("physics","phy101");
         CourseDto course2 = new CourseDto( "biology","bio101");
-        courseService.saveAllCourses(List.of(course, course1, course2));
+        courseServiceImpl.saveAllCourses(List.of(course, course1, course2));
 
-        List<CourseDto> result = courseService.getStudentCourse();
+        List<CourseDto> result = courseServiceImpl.getStudentCourse();
 
         assertNotNull(result);
         assertEquals(3, result.size());
@@ -64,7 +64,8 @@ class CourseServiceTest {
     void shouldThrowExceptionWhenNameIsBlank() {
         CourseDto invalidDto = new CourseDto(" ", "phy101");
 
-        assertThrows(CourseNotFoundException.class, () -> {courseService.addNewCourse(invalidDto);});
+        assertThrows(CourseNotFoundException.class, () -> {
+            courseServiceImpl.addNewCourse(invalidDto);});
     }
 
 

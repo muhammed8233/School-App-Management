@@ -21,19 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @Transactional
-class AttendanceRecordServiceTest {
+class AttendanceRecordServiceImplTest {
 
     @Autowired
     private AttendanceRecordRepository attendanceRecordRepository;
 
     @Autowired
-    private AttendanceRecordService attendanceRecordService;
+    private AttendanceRecordServiceImpl attendanceRecordServiceImpl;
     @Autowired
-    private StudentService studentService;
+    private StudentServiceImpl studentServiceImpl;
     @Autowired
-    private CourseService courseService;
+    private CourseServiceImpl courseServiceImpl;
     @Autowired
-    private EnrollmentService enrollmentService;
+    private EnrollmentServiceImpl enrollmentServiceImpl;
 
     @BeforeEach
     void setup() {
@@ -45,11 +45,11 @@ class AttendanceRecordServiceTest {
     void testMarkStudentAttendance() {
         LocalDate testDate = LocalDate.of(2025, 12, 18);
 
-        StudentDto musa = studentService.saveAllStudents(List.of(
+        StudentDto musa = studentServiceImpl.saveAllStudents(List.of(
                 new StudentDto("musa", "musa@gmail.com", "ss1")
         )).get(0);
 
-        CourseDto physics = courseService.saveAllCourses(List.of(
+        CourseDto physics = courseServiceImpl.saveAllCourses(List.of(
                 new CourseDto("physics", "phy101")
         )).get(0);
 
@@ -57,12 +57,12 @@ class AttendanceRecordServiceTest {
         enrollment.setCourseId(physics.getCourseId());
         enrollment.setStudentId(musa.getStudentId());
 
-        enrollmentService.saveAllEnrollments(List.of(enrollment));
+        enrollmentServiceImpl.saveAllEnrollments(List.of(enrollment));
 
-        attendanceRecordService.markStudentAttendance(
+        attendanceRecordServiceImpl.markStudentAttendance(
                 musa.getStudentId(), physics.getCourseId(), testDate, Status.PRESENT);
 
-        AttendanceRecordDto recordDto = attendanceRecordService.getStudentAttendance(
+        AttendanceRecordDto recordDto = attendanceRecordServiceImpl.getStudentAttendance(
                 musa.getStudentId(), physics.getCourseId());
 
         assertNotNull(recordDto);
@@ -78,17 +78,17 @@ class AttendanceRecordServiceTest {
         LocalDate testDate = LocalDate.of(2025, 12, 21);
         LocalDate testDate1 = LocalDate.of(2025, 12, 22);
 
-        StudentDto savedStudents = studentService.saveAllStudents(List.of(
+        StudentDto savedStudents = studentServiceImpl.saveAllStudents(List.of(
                 new StudentDto("abel", "abel@gmail.com", "ss1"))).get(0);
 
-        CourseDto savedCourses = courseService.saveAllCourses(List.of(
+        CourseDto savedCourses = courseServiceImpl.saveAllCourses(List.of(
                 new CourseDto("physics", "phy101"))).get(0);
 
         EnrollmentDto enrollmentDto = new EnrollmentDto();
         enrollmentDto.setStudentId(savedStudents.getStudentId());
         enrollmentDto.setCourseId(savedCourses.getCourseId());
 
-        enrollmentService.saveAllEnrollments(List.of(enrollmentDto));
+        enrollmentServiceImpl.saveAllEnrollments(List.of(enrollmentDto));
 
         AttendanceRecordDto recordDto = new AttendanceRecordDto();
         recordDto.setStudentId(savedStudents.getStudentId());
@@ -102,7 +102,7 @@ class AttendanceRecordServiceTest {
         recordDto1.setDate(testDate1);
         recordDto1.setStatus(Status.PRESENT);
 
-        List<AttendanceRecordDto> dto = attendanceRecordService.saveAllAttendanceRecords(List.of(recordDto, recordDto1));
+        List<AttendanceRecordDto> dto = attendanceRecordServiceImpl.saveAllAttendanceRecords(List.of(recordDto, recordDto1));
 
         assertNotNull(dto);
         assertEquals(2, dto.size());
@@ -115,9 +115,9 @@ class AttendanceRecordServiceTest {
 
     @Test
     void testToGetAllStudentAttendanceRecord() {
-        List<StudentDto> savedStudents = studentService.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1")));
-        List<CourseDto> savedCourses = courseService.saveAllCourses(List.of(new CourseDto("physics", "phy101")));
-        List<EnrollmentDto> enrollments = enrollmentService.saveAllEnrollments(List.of(
+        List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1")));
+        List<CourseDto> savedCourses = courseServiceImpl.saveAllCourses(List.of(new CourseDto("physics", "phy101")));
+        List<EnrollmentDto> enrollments = enrollmentServiceImpl.saveAllEnrollments(List.of(
                 new EnrollmentDto(savedStudents.get(0).getStudentId(), savedCourses.get(0).getCourseId())));
 
         AttendanceRecordDto recordDto = new AttendanceRecordDto();
@@ -132,8 +132,8 @@ class AttendanceRecordServiceTest {
         recordDto1.setDate(LocalDate.of(2025, 12, 19));
         recordDto1.setStatus(Status.PRESENT);
 
-        attendanceRecordService.saveAllAttendanceRecords(List.of(recordDto, recordDto1));
-        AttendanceRecordDto dto = attendanceRecordService.getStudentAttendance(enrollments.getFirst().getStudentId(),
+        attendanceRecordServiceImpl.saveAllAttendanceRecords(List.of(recordDto, recordDto1));
+        AttendanceRecordDto dto = attendanceRecordServiceImpl.getStudentAttendance(enrollments.getFirst().getStudentId(),
                 enrollments.getFirst().getCourseId());
 
         assertNotNull(dto);

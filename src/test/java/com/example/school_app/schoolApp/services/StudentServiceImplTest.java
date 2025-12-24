@@ -20,15 +20,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @SpringBootTest
-class StudentServiceTest {
+class StudentServiceImplTest {
 
     @Autowired
-    private  StudentService studentService;
+    private StudentServiceImpl studentServiceImpl;
     @Autowired
     private StudentRepository studentRepository;
 
     @MockitoBean
-    private ImageService imageService;
+    private ImageServiceImpl imageServiceImpl;
 
     @BeforeEach
     void setUp(){
@@ -43,9 +43,9 @@ class StudentServiceTest {
 
         StudentDto studentDto = new StudentDto("bala", "bala@gmail.com", "ss1", fakeFile);
 
-        org.mockito.BDDMockito.given(imageService.uploadImage(any(), anyString())).willReturn("cloudinary.com");
+        org.mockito.BDDMockito.given(imageServiceImpl.uploadImage(any(), anyString())).willReturn("cloudinary.com");
 
-        StudentDto result = studentService.addNewStudent(studentDto);
+        StudentDto result = studentServiceImpl.addNewStudent(studentDto);
 
         assertNotNull(result);
         assertEquals("bala@gmail.com", result.getEmail());
@@ -55,15 +55,15 @@ class StudentServiceTest {
     @Test
     void shouldThrowExceptionWhenEmailAlreadyExists() throws IOException {
         MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
-        org.mockito.BDDMockito.given(imageService.uploadImage(any(), anyString())).willReturn("url");
+        org.mockito.BDDMockito.given(imageServiceImpl.uploadImage(any(), anyString())).willReturn("url");
 
         StudentDto studentDto = new StudentDto("bala", "bala@gmail.com", "ss1", image);
 
 
-        studentService.addNewStudent(studentDto);
+        studentServiceImpl.addNewStudent(studentDto);
 
         assertThrows(StudentAlreadyExistException.class, () -> {
-            studentService.addNewStudent(studentDto);
+            studentServiceImpl.addNewStudent(studentDto);
         });
     }
 
@@ -71,9 +71,9 @@ class StudentServiceTest {
     void testToViewAllStudent(){
         StudentDto student = new StudentDto("musa","musa@hotmail.com","ss1");
         StudentDto student1 = new StudentDto("bala","bala@gmail.com","ss1");
-        studentService.saveAllStudents(List.of(student1, student));
+        studentServiceImpl.saveAllStudents(List.of(student1, student));
 
-        List<StudentDto> result = studentService.getStudents();
+        List<StudentDto> result = studentServiceImpl.getStudents();
 
         assertNotNull(result);
         System.out.println(result.get(0));

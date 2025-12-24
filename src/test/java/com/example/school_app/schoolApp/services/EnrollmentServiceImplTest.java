@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class EnrollmentServiceTest {
-    @Autowired private GradeService gradeService;
-    @Autowired private StudentService studentService;
-    @Autowired private EnrollmentService enrollmentService;
-    @Autowired private  CourseService courseService;
+class EnrollmentServiceImplTest {
+    @Autowired private GradeServiceImpl gradeServiceImpl;
+    @Autowired private StudentServiceImpl studentServiceImpl;
+    @Autowired private EnrollmentServiceImpl enrollmentServiceImpl;
+    @Autowired private CourseServiceImpl courseServiceImpl;
     @Autowired private EnrollmentRepository enrollmentRepository;
 
     @BeforeEach
@@ -29,12 +29,12 @@ class EnrollmentServiceTest {
 
     @Test
     void testToEnrollStudentInACourse() {
-        StudentDto savedStudent = studentService.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1"))).get(0);
-        CourseDto savedCourse = courseService.saveAllCourses(List.of(new CourseDto("physics", "phy101"))).get(0);
+        StudentDto savedStudent = studentServiceImpl.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1"))).get(0);
+        CourseDto savedCourse = courseServiceImpl.saveAllCourses(List.of(new CourseDto("physics", "phy101"))).get(0);
 
-        enrollmentService.enrollStudentInCourse(savedStudent.getStudentId(), savedCourse.getCourseId());
+        enrollmentServiceImpl.enrollStudentInCourse(savedStudent.getStudentId(), savedCourse.getCourseId());
 
-        List<EnrollmentDto> enrollments = enrollmentService.getAllEnrollment();
+        List<EnrollmentDto> enrollments = enrollmentServiceImpl.getAllEnrollment();
 
         assertNotNull(enrollments);
         assertEquals(1, enrollments.size());
@@ -44,11 +44,11 @@ class EnrollmentServiceTest {
 
 @Test
 void testToGetAllCourseForAStudent() {
-    List<StudentDto> savedStudents = studentService.saveAllStudents(List.of(
+    List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(
             new StudentDto("musa", "musa@gmail.com", "ss1"),
             new StudentDto("yahaya", "yahaya@gmail.com", "ss1")));
 
-    List<CourseDto> savedCourses = courseService.saveAllCourses(List.of(
+    List<CourseDto> savedCourses = courseServiceImpl.saveAllCourses(List.of(
             new CourseDto("physics", "phy101"),
             new CourseDto("chemistry", "chm101")));
 
@@ -66,9 +66,9 @@ void testToGetAllCourseForAStudent() {
     enrollmentDto.setCourseId(course2Id);
     enrollmentDto.setStudentId(student1Id);
 
-    enrollmentService.saveAllEnrollments(List.of(enrollmentDto1, enrollmentDto));
+    enrollmentServiceImpl.saveAllEnrollments(List.of(enrollmentDto1, enrollmentDto));
 
-    List<EnrollmentDto> result = enrollmentService.getCourseByStudent(student1Id);
+    List<EnrollmentDto> result = enrollmentServiceImpl.getCourseByStudent(student1Id);
     assertNotNull(result);
     assertEquals(2, result.size());
     assertEquals(course1Id, result.get(0).getCourseId());
@@ -80,11 +80,11 @@ void testToGetAllCourseForAStudent() {
 
     @Test
     void testToGetAllEnrollment(){
-        List <StudentDto> savedStudent = studentService.saveAllStudents(List.of(
+        List <StudentDto> savedStudent = studentServiceImpl.saveAllStudents(List.of(
                 new StudentDto("musa", "musa@gmail.com", "ss1"),
                 new StudentDto("yahaya", "yahaya@gmail.com", "ss1")));
 
-        List<CourseDto> savedCourse = courseService.saveAllCourses(List.of(
+        List<CourseDto> savedCourse = courseServiceImpl.saveAllCourses(List.of(
                 new CourseDto("physics", "phy101"),
                 new CourseDto("physics", "phy101")));
 
@@ -97,9 +97,9 @@ void testToGetAllCourseForAStudent() {
         enrollmentDto1.setStudentId(savedStudent.get(1).getStudentId());
         enrollmentDto1.setCourseId(savedCourse.get(1).getCourseId());
 
-        enrollmentService.saveAllEnrollments(List.of(enrollmentDto, enrollmentDto1));
+        enrollmentServiceImpl.saveAllEnrollments(List.of(enrollmentDto, enrollmentDto1));
 
-        List<EnrollmentDto> result = enrollmentService.getAllEnrollment();
+        List<EnrollmentDto> result = enrollmentServiceImpl.getAllEnrollment();
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -107,10 +107,10 @@ void testToGetAllCourseForAStudent() {
 
     @Test
     void testToGetAllStudentByACourse(){
-        StudentDto studentDto = studentService.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1"))).get(0);
-        CourseDto courseDto = courseService.saveAllCourses(List.of(new CourseDto("physics", "phy101"))).get(0);
+        StudentDto studentDto = studentServiceImpl.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1"))).get(0);
+        CourseDto courseDto = courseServiceImpl.saveAllCourses(List.of(new CourseDto("physics", "phy101"))).get(0);
 
-        StudentDto studentDto2 = studentService.saveAllStudents(List.of(new StudentDto("yahaya", "yahaya@gmail.com", "ss1"))).get(0);
+        StudentDto studentDto2 = studentServiceImpl.saveAllStudents(List.of(new StudentDto("yahaya", "yahaya@gmail.com", "ss1"))).get(0);
 
         EnrollmentDto enrollment = new EnrollmentDto();
         enrollment.setCourseId(courseDto.getCourseId());
@@ -120,9 +120,9 @@ void testToGetAllCourseForAStudent() {
         enrollment1.setStudentId(studentDto2.getStudentId());
         enrollment1.setCourseId(courseDto.getCourseId());
 
-        enrollmentService.saveAllEnrollments(List.of(enrollment, enrollment1));
+        enrollmentServiceImpl.saveAllEnrollments(List.of(enrollment, enrollment1));
 
-        List<EnrollmentDto> result = enrollmentService.getStudentsByACourse(courseDto.getCourseId());
+        List<EnrollmentDto> result = enrollmentServiceImpl.getStudentsByACourse(courseDto.getCourseId());
 
         assertNotNull(result);
         System.out.println(result);

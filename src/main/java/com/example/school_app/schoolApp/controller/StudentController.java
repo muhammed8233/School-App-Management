@@ -1,7 +1,7 @@
 package com.example.school_app.schoolApp.controller;
 
 import com.example.school_app.schoolApp.dto.StudentDto;
-import com.example.school_app.schoolApp.services.StudentServiceInterface;
+import com.example.school_app.schoolApp.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,28 +19,28 @@ import java.util.List;
 @Validated
 public class StudentController {
 
-    @Autowired private final StudentServiceInterface studentServiceInterface;
+    @Autowired private final StudentService studentService;
 
-    public StudentController(StudentServiceInterface studentServiceInterface){
-        this.studentServiceInterface = studentServiceInterface;
+    public StudentController(StudentService studentService){
+        this.studentService = studentService;
     }
 
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<StudentDto> register(@ModelAttribute @Valid StudentDto dto) throws IOException {
-        return new ResponseEntity<>(studentServiceInterface.addNewStudent(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(studentService.addNewStudent(dto), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<StudentDto>> getStudent(){
-       List<StudentDto> savedStudent = studentServiceInterface.getStudents();
+       List<StudentDto> savedStudent = studentService.getStudents();
 
         return ResponseEntity.ok(savedStudent);
     }
 
     @PostMapping("/bulk-register")
     public ResponseEntity<List<StudentDto>> registerMultipleStudents(@RequestBody List<StudentDto> dtos) {
-        List<StudentDto> savedStudents = studentServiceInterface.saveAllStudents(dtos);
+        List<StudentDto> savedStudents = studentService.saveAllStudents(dtos);
         return new ResponseEntity<>(savedStudents, HttpStatus.CREATED);
     }
 
