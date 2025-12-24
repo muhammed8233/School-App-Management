@@ -2,6 +2,9 @@ package com.example.school_app.schoolApp.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.example.school_app.schoolApp.exception.ImageNotFoundException;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,17 +14,18 @@ import java.util.Map;
 
 @Service
 public class ImageService implements ImageServiceInterface{
-
-    @Autowired private  Cloudinary cloudinary;
+    @Autowired
+    private final Cloudinary cloudinary;
 
     public ImageService(Cloudinary cloudinary) {
         this.cloudinary = cloudinary;
     }
 
+
     @Override
     public String uploadImage(MultipartFile file, String folderName) throws IOException {
         if (file == null || file.isEmpty()) {
-            throw new IllegalArgumentException("Cannot upload an empty file");
+            throw new ImageNotFoundException("Cannot upload an empty file");
         }
 
         Map options = ObjectUtils.asMap("folder", folderName,

@@ -93,13 +93,12 @@ public class CourseService implements CourseServiceInterface {
     }
 
 
-    @Override
     public Course getCourseById(Long id) {
         return courseRepository.findById(id)
                 .orElseThrow(() -> new CourseNotFoundException("Course with Id " + id + " not found"));
     }
 
-    public String findCodeById(Long id) {
+    public String findCourseCodeById(Long id) {
         return getCourseById(id).getCourseCode();
     }
 

@@ -1,5 +1,7 @@
 package com.example.school_app.schoolApp.services;
 
+import com.example.school_app.schoolApp.exception.AttendanceRecordAlreadyExistException;
+import com.example.school_app.schoolApp.exception.AttendanceRecordNotFoundException;
 import com.example.school_app.schoolApp.exception.EnrollmentNotFoundException;
 import com.example.school_app.schoolApp.model.AttendanceRecord;
 import com.example.school_app.schoolApp.model.Course;
@@ -25,21 +27,18 @@ public class AttendanceRecordService implements AttendanceRecordServiceInterface
 
     @Autowired
     private final AttendanceRecordRepository attendanceRecordRepository;
-
     @Autowired
-    private final StudentRepository studentRepository;
-
+    private final StudentService studentService;
     @Autowired
-    private final CourseRepository courseRepository;
-
+    private final CourseService courseService;
     @Autowired
-    private final EnrollmentRepository enrollmentRepository;
+    private final EnrollmentService enrollmentService;
 
-    public AttendanceRecordService(AttendanceRecordRepository attendanceRecordRepository, StudentRepository studentRepository, CourseRepository courseRepository, EnrollmentRepository enrollmentRepository) {
+    public AttendanceRecordService(AttendanceRecordRepository attendanceRecordRepository, StudentService studentService, CourseService courseService, EnrollmentService enrollmentService) {
         this.attendanceRecordRepository = attendanceRecordRepository;
-        this.studentRepository = studentRepository;
-        this.courseRepository = courseRepository;
-        this.enrollmentRepository = enrollmentRepository;
+        this.studentService = studentService;
+        this.courseService = courseService;
+        this.enrollmentService = enrollmentService;
     }
 
     @Override
@@ -71,16 +70,17 @@ public class AttendanceRecordService implements AttendanceRecordServiceInterface
 
     @Override
     public AttendanceRecordDto markStudentAttendance(Long studentId, Long courseId, LocalDate date, Status status) {
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new RuntimeException("Student not found"));
+        Student student = studentService.getStudentById(studentId);
 
-        Course course = courseRepository.findById(courseId).orElseThrow(() ->
-                new RuntimeException("Course not found"));
+        Course course = courseService.getCourseById(courseId);
 
-       Enrollment  enrollment = enrollmentRepository.findByStudentAndCourse(student, course);
+       Enrollment  enrollment = enrollmentService.findEnrollmentByStudentAndCourse(student, course);
+       if(enrollment == null){
+           throw new EnrollmentNotFoundException("Enrollment not found");
+       }
 
         if (attendanceRecordRepository.existsByEnrollmentAndDate(enrollment, date)) {
-            throw new IllegalStateException("attendance for "+ enrollment.getStudent().getName()+
+            throw new AttendanceRecordAlreadyExistException("attendance for "+ enrollment.getStudent().getName()+
                     " has been already marked today");
         }
         AttendanceRecord attendance = new AttendanceRecord();
@@ -103,17 +103,15 @@ public class AttendanceRecordService implements AttendanceRecordServiceInterface
     @Override
     public List<AttendanceRecordDto> saveAllAttendanceRecords(List<AttendanceRecordDto> attendanceRecordDtoList) {
         if (attendanceRecordDtoList == null || attendanceRecordDtoList.isEmpty()) {
-            throw new RuntimeException("Attendance record cannot be empty");
+            throw new AttendanceRecordNotFoundException("Attendance record cannot be empty");
         }
         List<AttendanceRecord> records = new ArrayList<>();
 
         for (AttendanceRecordDto dto : attendanceRecordDtoList) {
 
-            Enrollment enrollment = enrollmentRepository.findByStudentIdAndCourseId(dto.getStudentId(), dto.getCourseId());
-            if (enrollment == null) {
-                throw new EnrollmentNotFoundException("No enrollment found for Student ID " +
-                        dto.getStudentId() + " and Course ID " + dto.getCourseId());
-            }
+            Enrollment enrollment = enrollmentService.findByStudentIdAndCourseId(dto.getStudentId(), dto.getCourseId());
+
+
             AttendanceRecord record = new AttendanceRecord();
             record.setEnrollment(enrollment);
             record.setDate(dto.getDate());
