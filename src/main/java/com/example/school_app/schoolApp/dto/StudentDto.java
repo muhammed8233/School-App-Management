@@ -22,6 +22,7 @@ public class StudentDto {
     private String className;
 
     private MultipartFile profileImage;
+
     private String profileImageUrl;
 
     public StudentDto() {}
