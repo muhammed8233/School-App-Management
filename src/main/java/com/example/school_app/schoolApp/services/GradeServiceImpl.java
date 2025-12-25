@@ -64,31 +64,51 @@ public class GradeServiceImpl implements GradeService {
 
         return gradeDto;
     }
-    @Override
-    public List<ScoreDto> getAllStudentScoreInACourse() {
-        List<EnrollmentDto> enrollments = enrollmentServiceImpl.getAllEnrollment();
-        List<ScoreDto> results = new ArrayList<>();
 
-        for (EnrollmentDto enrollment : enrollments) {
-            ScoreDto dto = new ScoreDto();
-            dto.setStudentId(enrollment.getStudentId());
-            dto.setCourseId(enrollment.getCourseId());
+//    @Override
+//    public List<ScoreDto> getAllStudentScoreInACourse() {
+//        List<EnrollmentDto> enrollments = enrollmentServiceImpl.getAllEnrollment();
+//        List<ScoreDto> results = new ArrayList<>();
+//
+//        for (EnrollmentDto enrollment : enrollments) {
+//            ScoreDto dto = new ScoreDto();
+//            dto.setStudentId(enrollment.getStudentId());
+//            dto.setCourseId(enrollment.getCourseId());
+//
+//            Double testVal = gradeRepository.findScore(enrollment.getEnrollmentId(), Assessment.TEST);
+//            Double assignmentVal = gradeRepository.findScore(enrollment.getEnrollmentId(), Assessment.ASSIGNMENT);
+//            Double examVal = gradeRepository.findScore(enrollment.getEnrollmentId(), Assessment.EXAM);
+//
+//            dto.setTestScore(testVal);
+//            dto.setAssignmentScore(assignmentVal);
+//            dto.setExamScore(examVal);
+//
+//            double finalScore = computeFinalScore(enrollment.getEnrollmentId());
+//            dto.setFinalScore(finalScore);
+//
+//            results.add(dto);
+//        }
+//        return results;
+//    }
 
-            Double testVal = gradeRepository.findScore(enrollment.getEnrollmentId(), Assessment.TEST);
-            Double assignmentVal = gradeRepository.findScore(enrollment.getEnrollmentId(), Assessment.ASSIGNMENT);
-            Double examVal = gradeRepository.findScore(enrollment.getEnrollmentId(), Assessment.EXAM);
+    public ScoreDto getStudentScoreInCourse(Long studentId, Long courseId) {
+        Enrollment enrollment = enrollmentServiceImpl.findByStudentIdAndCourseId(studentId, courseId);
 
-            dto.setTestScore(testVal);
-            dto.setAssignmentScore(assignmentVal);
-            dto.setExamScore(examVal);
+        ScoreDto dto = new ScoreDto();
+        dto.setStudentId(studentId);
+        dto.setCourseId(courseId);
 
-            double finalScore = computeFinalScore(enrollment.getEnrollmentId());
-            dto.setFinalScore(finalScore);
+        dto.setTestScore(gradeRepository.findScore(enrollment.getId(), Assessment.TEST).orElse(0.0));
+        dto.setAssignmentScore(gradeRepository.findScore(enrollment.getId(), Assessment.ASSIGNMENT).orElse(0.0));
+        dto.setExamScore(gradeRepository.findScore(enrollment.getId(), Assessment.EXAM).orElse(0.0));
 
-            results.add(dto);
-        }
-        return results;
+
+        dto.setFinalScore(computeFinalScore(enrollment.getId()));
+
+        return dto;
     }
+
+
 
     @Override
     public double computeFinalScore(Long enrolmentId){

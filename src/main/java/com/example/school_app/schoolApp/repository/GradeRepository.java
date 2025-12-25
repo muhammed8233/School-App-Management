@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GradeRepository extends JpaRepository<Grade, Long> {
 
@@ -16,7 +17,7 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     List<Grade> findByEnrollmentId(Long enrollmentId);
 
     @Query("SELECT g.score FROM Grade g WHERE g.enrollment.id = :enrollmentId AND g.assessmentType = :assessment")
-    Double findScore(@Param("enrollmentId") Long enrollmentId, @Param("assessment") Assessment assessment);
+    Optional<Double> findScore(@Param("enrollmentId") Long enrollmentId, @Param("assessment") Assessment assessment);
 
 }
 

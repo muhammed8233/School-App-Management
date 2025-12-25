@@ -65,6 +65,7 @@ public class StudentServiceImpl implements StudentService {
             studentDto1.setName(student.getName());
             studentDto1.setEmail(student.getEmail());
             studentDto1.setClassName(student.getClassName());
+            studentDto1.setProfileImageUrl(student.getProfileImageUrl());
 
             studentDto.add(studentDto1);
         }

@@ -1,12 +1,13 @@
 package com.example.school_app.schoolApp.model;
 
 import jakarta.persistence.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 public class Student {
     @Id
     @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
+            strategy = GenerationType.IDENTITY,
             generator = "student_sequence"
     )
     private Long id;
@@ -14,6 +15,7 @@ public class Student {
     private String email;
     private String className;
     private String profileImageUrl;
+
 
     public Student(){}
 

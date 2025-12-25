@@ -10,10 +10,10 @@ import java.util.List;
 public interface GradeService {
     GradeDto recordStudentScore(Long studentId, Long courseId, Assessment type, double score);
 
-   List<ScoreDto> getAllStudentScoreInACourse();
-
     double computeFinalScore(Long enrollmentId);
 
     @Transactional
     List<GradeDto> saveAllGrades(List<GradeDto> gradeRequests);
+
+    ScoreDto getStudentScoreInCourse(Long studentId, Long courseId);
 }

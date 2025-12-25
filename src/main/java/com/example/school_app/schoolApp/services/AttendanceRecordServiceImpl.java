@@ -58,7 +58,6 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
 
         if (lastRecord != null) {
             dto.setDate(lastRecord.getDate());
-            dto.setStatus(lastRecord.getStatus());
         }
 
         return dto;

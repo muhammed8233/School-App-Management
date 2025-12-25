@@ -30,11 +30,12 @@ public class GradeController {
     }
 
 
-    @GetMapping("all-scores")
-    public ResponseEntity<List<ScoreDto>> getAllStudentScoreInACourse(){
-        List<ScoreDto> records = gradeService.getAllStudentScoreInACourse();
+    @GetMapping("/student/{studentId}/course/{courseId}")
+    public ResponseEntity<ScoreDto> getStudentScore(@PathVariable Long studentId,
+            @PathVariable Long courseId) {
 
-        return  ResponseEntity.ok(records);
+        ScoreDto record = gradeService.getStudentScoreInCourse(studentId, courseId);
+        return ResponseEntity.ok(record);
     }
 
 

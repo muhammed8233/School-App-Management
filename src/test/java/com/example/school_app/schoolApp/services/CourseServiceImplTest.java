@@ -3,9 +3,11 @@ package com.example.school_app.schoolApp.services;
 import com.example.school_app.schoolApp.exception.CourseNotFoundException;
 import com.example.school_app.schoolApp.repository.CourseRepository;
 import com.example.school_app.schoolApp.dto.CourseDto;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -17,6 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 class CourseServiceImplTest {
 
     @Autowired

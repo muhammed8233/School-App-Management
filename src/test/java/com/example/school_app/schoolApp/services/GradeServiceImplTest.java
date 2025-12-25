@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
@@ -15,6 +16,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
+@Transactional
 class GradeServiceImplTest {
 
     @Autowired
@@ -49,13 +52,11 @@ class GradeServiceImplTest {
                 enrollmentDtoList.get(0).getCourseId(), Assessment.TEST,
                 50.0);
 
-        List<ScoreDto> grades = gradeServiceImpl.getAllStudentScoreInACourse();
+        ScoreDto grades = gradeServiceImpl.getStudentScoreInCourse(enrollmentDtoList.getFirst().getStudentId(), enrollmentDtoList.getFirst().getCourseId());
 
         assertNotNull(grades);
-        assertEquals(1, grades.size());
-        ScoreDto firstResult = grades.get(0);
-        assertEquals(savedCourse.get(0).getCourseId(), firstResult.getCourseId());
-        assertEquals(50.0, firstResult.getTestScore());
+        assertEquals(savedCourse.get(0).getCourseId(), grades.getCourseId());
+        assertEquals(50.0, grades.getTestScore());
 
     }
 
@@ -72,11 +73,11 @@ class GradeServiceImplTest {
                 new GradeDto(enrollments.get(0).getStudentId(), enrollments.get(0).getCourseId(), Assessment.EXAM, 90.0),
                 new GradeDto(enrollments.get(0).getStudentId(), enrollments.get(0).getCourseId(), Assessment.ASSIGNMENT, 20.0)
         ));
-       List<ScoreDto>  result = gradeServiceImpl.getAllStudentScoreInACourse();
+
+       ScoreDto  result = gradeServiceImpl.getStudentScoreInCourse(enrollments.getFirst().getStudentId(), enrollments.getFirst().getCourseId());
 
        assertNotNull(result);
-       assertEquals(1, result.size());
-       assertEquals(74.0, result.get(0).getFinalScore());
+       assertEquals(74.0, result.getFinalScore());
     }
 
     @Transactional
