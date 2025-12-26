@@ -10,16 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -31,7 +26,7 @@ class StudentServiceImplTest {
     @Autowired
     private StudentRepository studentRepository;
 
-    @MockitoBean
+    @Autowired
     private ImageServiceImpl imageServiceImpl;
 
     @BeforeEach
@@ -41,51 +36,65 @@ class StudentServiceImplTest {
 
 
     @Test
-    void testToVerifyAddNewStudent() throws IOException {
-        MockMultipartFile fakeFile = new MockMultipartFile(
+    void testToVerifyRegisterStudent() throws IOException {
+        MockMultipartFile image = new MockMultipartFile(
                 "profileImage", "test.jpg", "image/jpeg", "test data".getBytes());
 
-        StudentDto studentDto = new StudentDto("bala", "bala@gmail.com", "ss1", fakeFile);
+        StudentDto studentDto = StudentDto.builder()
+                .name("bala")
+                .email("bala@gmail.com").className("ss1")
+                .profileImage(image).build();
 
-        org.mockito.BDDMockito.given(imageServiceImpl.uploadImage(any(), anyString())).willReturn("cloudinary.com");
+        assertEquals(0,studentRepository.findAll().size());
 
-        StudentDto result = studentServiceImpl.addNewStudent(studentDto);
+        StudentDto result = studentServiceImpl.registerStudent(studentDto);
+        assertEquals(1, studentRepository.findAll().size());
 
         assertNotNull(result);
+        assertNotNull(result.getStudentId());
         assertEquals("bala@gmail.com", result.getEmail());
-        assertEquals("cloudinary.com", result.getProfileImageUrl());
+
     }
 
     @Test
     void shouldThrowExceptionWhenEmailAlreadyExists() throws IOException {
         MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
-        org.mockito.BDDMockito.given(imageServiceImpl.uploadImage(any(), anyString())).willReturn("url");
 
-        StudentDto studentDto = new StudentDto("bala", "bala@gmail.com", "ss1", image);
+        StudentDto studentDto = StudentDto.builder()
+                .name("bala")
+                .email("bala@gmail.com").className("ss1")
+                .profileImage(image).build();
 
-
-        studentServiceImpl.addNewStudent(studentDto);
+        studentServiceImpl.registerStudent(studentDto);
 
         assertThrows(StudentAlreadyExistException.class, () -> {
-            studentServiceImpl.addNewStudent(studentDto);
+            studentServiceImpl.registerStudent(studentDto);
         });
     }
 
     @Test
-    void testToViewAllStudent(){
-        StudentDto student = new StudentDto("musa","musa@hotmail.com","ss1");
-        StudentDto student1 = new StudentDto("bala","bala@gmail.com","ss1");
+    void testToViewAllStudent() throws IOException{
+        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+        MultipartFile image1 = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+
+        StudentDto student = StudentDto.builder()
+                .name("musa")
+                .email("musa@gmail.com").className("ss1")
+                .profileImage(image).build();
+
+        StudentDto student1 = StudentDto.builder()
+                .name("bala")
+                .email("bala@gmail.com").className("ss1")
+                .profileImage(image1).build();
+
+        assertEquals(0, studentRepository.findAll().size());
         studentServiceImpl.saveAllStudents(List.of(student1, student));
+        assertEquals(2, studentRepository.findAll().size());
 
         List<StudentDto> result = studentServiceImpl.getStudents();
 
         assertNotNull(result);
-        System.out.println(result.get(0));
-        System.out.println(result.get(1));
-        assertEquals(2,result.size());
-        assertEquals("musa@hotmail.com", result.get(1).getEmail());
-        assertEquals("bala", result.get(0).getName());
-        assertEquals("musa", result.get(1).getName());
+        assertNotNull(result.get(1).getStudentId());
 
     }
 

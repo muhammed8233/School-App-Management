@@ -28,7 +28,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Transactional
     @Override
-    public StudentDto addNewStudent( StudentDto studentDto) throws IOException {
+    public StudentDto registerStudent(StudentDto studentDto) throws IOException {
         boolean exists = studentRepository.existsByEmail(studentDto.getEmail());
         if(exists){
             throw new StudentAlreadyExistException("student with email:" + studentDto.getEmail() + " already exist");
@@ -75,7 +75,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Transactional
     @Override
-    public List<StudentDto> saveAllStudents(List<StudentDto> studentDto){
+    public List<StudentDto> saveAllStudents(List<StudentDto> studentDto) throws IOException {
         if(studentDto == null || studentDto.isEmpty() ){
             throw new StudentNotFoundException("student dto can not be empty");
         }
@@ -85,7 +85,15 @@ public class StudentServiceImpl implements StudentService {
             if(studentRepository.existsByEmail(dto.getEmail())){
                 throw new StudentAlreadyExistException("Email " + dto.getEmail() + " already exists");
             }
-            Student student = new Student(dto.getName(), dto.getEmail(), dto.getClassName());
+            String imageUrl = imageServiceImpl.uploadImage(dto.getProfileImage(), "student_profiles");
+
+            Student student = Student.builder()
+                    .name(dto.getName())
+                    .email(dto.getEmail())
+                    .className(dto.getClassName())
+                    .profileImageUrl(imageUrl)
+                    .build();
+
             students.add(student);
         }
 
@@ -98,6 +106,7 @@ public class StudentServiceImpl implements StudentService {
             studentDto1.setName(student.getName());
             studentDto1.setEmail(student.getEmail());
             studentDto1.setClassName(student.getClassName());
+            studentDto1.setProfileImageUrl(student.getProfileImageUrl());
             dtos.add(studentDto1);
         }
         return dtos;

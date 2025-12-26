@@ -1,11 +1,19 @@
 package com.example.school_app.schoolApp.model;
 
 import com.example.school_app.schoolApp.Enum.Status;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class AttendanceRecord {
     @Id
     @GeneratedValue(
@@ -19,48 +27,12 @@ public class AttendanceRecord {
             nullable = false
     )
     private Enrollment enrollment;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate date;
+
     @Enumerated(EnumType.STRING)
     private Status status;
-    public AttendanceRecord(){}
-    public AttendanceRecord(Long id, Enrollment enrollmentId, Status status, LocalDate date) {
-        this.id = id;
-        this.enrollment = enrollmentId;
-        this.status = status;
-        this.date = date;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Enrollment getEnrollment() {
-        return enrollment;
-    }
-
-    public void setEnrollment(Enrollment enrollment) {
-        this.enrollment = enrollment;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 
     @Override
     public String toString() {

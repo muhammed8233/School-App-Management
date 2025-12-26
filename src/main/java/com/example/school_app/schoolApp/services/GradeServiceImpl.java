@@ -65,32 +65,6 @@ public class GradeServiceImpl implements GradeService {
         return gradeDto;
     }
 
-//    @Override
-//    public List<ScoreDto> getAllStudentScoreInACourse() {
-//        List<EnrollmentDto> enrollments = enrollmentServiceImpl.getAllEnrollment();
-//        List<ScoreDto> results = new ArrayList<>();
-//
-//        for (EnrollmentDto enrollment : enrollments) {
-//            ScoreDto dto = new ScoreDto();
-//            dto.setStudentId(enrollment.getStudentId());
-//            dto.setCourseId(enrollment.getCourseId());
-//
-//            Double testVal = gradeRepository.findScore(enrollment.getEnrollmentId(), Assessment.TEST);
-//            Double assignmentVal = gradeRepository.findScore(enrollment.getEnrollmentId(), Assessment.ASSIGNMENT);
-//            Double examVal = gradeRepository.findScore(enrollment.getEnrollmentId(), Assessment.EXAM);
-//
-//            dto.setTestScore(testVal);
-//            dto.setAssignmentScore(assignmentVal);
-//            dto.setExamScore(examVal);
-//
-//            double finalScore = computeFinalScore(enrollment.getEnrollmentId());
-//            dto.setFinalScore(finalScore);
-//
-//            results.add(dto);
-//        }
-//        return results;
-//    }
-
     public ScoreDto getStudentScoreInCourse(Long studentId, Long courseId) {
         Enrollment enrollment = enrollmentServiceImpl.findByStudentIdAndCourseId(studentId, courseId);
 

@@ -11,8 +11,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -44,16 +47,21 @@ class AttendanceRecordServiceImplTest {
 
     @Transactional
     @Test
-    void testMarkStudentAttendance() {
+    void testMarkStudentAttendance() throws IOException {
         LocalDate testDate = LocalDate.of(2025, 12, 18);
+        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+
 
         StudentDto musa = studentServiceImpl.saveAllStudents(List.of(
-                new StudentDto("musa", "musa@gmail.com", "ss1")
-        )).get(0);
+                StudentDto.builder()
+                        .name("musa")
+                        .email("musa@gmail.com").className("ss1")
+                        .profileImage(image).build())).get(0);
 
         CourseDto physics = courseServiceImpl.saveAllCourses(List.of(
-                new CourseDto("physics", "phy101")
-        )).get(0);
+                 CourseDto.builder()
+                         .courseName("physics")
+                         .courseCode("phy101").build())).get(0);
 
         EnrollmentDto enrollment = new EnrollmentDto();
         enrollment.setCourseId(physics.getCourseId());
@@ -61,14 +69,16 @@ class AttendanceRecordServiceImplTest {
 
         enrollmentServiceImpl.saveAllEnrollments(List.of(enrollment));
 
+        assertEquals(0, attendanceRecordRepository.findAll().size());
         attendanceRecordServiceImpl.markStudentAttendance(
                 musa.getStudentId(), physics.getCourseId(), testDate, Status.PRESENT);
+        assertEquals(1, attendanceRecordRepository.findAll().size());
 
         AttendanceRecordDto recordDto = attendanceRecordServiceImpl.getStudentAttendance(
                 musa.getStudentId(), physics.getCourseId());
 
         assertNotNull(recordDto);
-        assertEquals(Status.PRESENT, recordDto.getStatus());
+        assertEquals(1, recordDto.getPresent());
         assertEquals(physics.getCourseId(), recordDto.getCourseId());
         assertEquals(musa.getStudentId(), recordDto.getStudentId());
         assertEquals(testDate, recordDto.getDate());
@@ -76,15 +86,25 @@ class AttendanceRecordServiceImplTest {
 
     @Transactional
     @Test
-    void testToSaveAllAttendanceRecords() {
+    void testToSaveAllAttendanceRecords() throws IOException{
         LocalDate testDate = LocalDate.of(2025, 12, 21);
         LocalDate testDate1 = LocalDate.of(2025, 12, 22);
+        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+
 
         StudentDto savedStudents = studentServiceImpl.saveAllStudents(List.of(
-                new StudentDto("abel", "abel@gmail.com", "ss1"))).get(0);
+                StudentDto.builder()
+                        .name("abel")
+                        .email("abel@gmail.com")
+                        .className("ss1")
+                        .profileImage(image)
+                        .build())).get(0);
 
         CourseDto savedCourses = courseServiceImpl.saveAllCourses(List.of(
-                new CourseDto("physics", "phy101"))).get(0);
+                 CourseDto.builder()
+                         .courseName("physics")
+                         .courseCode("phy101")
+                         .build())).get(0);
 
         EnrollmentDto enrollmentDto = new EnrollmentDto();
         enrollmentDto.setStudentId(savedStudents.getStudentId());
@@ -104,10 +124,11 @@ class AttendanceRecordServiceImplTest {
         recordDto1.setDate(testDate1);
         recordDto1.setStatus(Status.PRESENT);
 
+        assertEquals(0, attendanceRecordRepository.findAll().size());
         List<AttendanceRecordDto> dto = attendanceRecordServiceImpl.saveAllAttendanceRecords(List.of(recordDto, recordDto1));
+        assertEquals(2, attendanceRecordRepository.findAll().size());
 
         assertNotNull(dto);
-        assertEquals(2, dto.size());
         assertEquals(savedStudents.getStudentId(), dto.getFirst().getStudentId());
         assertEquals(Status.ABSENT, dto.getFirst().getStatus());
         assertEquals(Status.PRESENT, dto.getLast().getStatus());
@@ -116,11 +137,25 @@ class AttendanceRecordServiceImplTest {
     }
 
     @Test
-    void testToGetAllStudentAttendanceRecord() {
-        List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1")));
-        List<CourseDto> savedCourses = courseServiceImpl.saveAllCourses(List.of(new CourseDto("physics", "phy101")));
+    void testToGetAllStudentAttendanceRecord() throws IOException {
+        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+
+        List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(StudentDto.builder()
+                .name("musa")
+                .email("musa@gmail.com")
+                .className("ss1")
+                .profileImage(image).build()));
+
+        List<CourseDto> savedCourses = courseServiceImpl.saveAllCourses(List.of(CourseDto.builder()
+                .courseName("physics")
+                .courseCode("phy101")
+                .build()));
+
         List<EnrollmentDto> enrollments = enrollmentServiceImpl.saveAllEnrollments(List.of(
-                new EnrollmentDto(savedStudents.get(0).getStudentId(), savedCourses.get(0).getCourseId())));
+                 EnrollmentDto.builder()
+                         .studentId(savedStudents.get(0).getStudentId())
+                         .courseId(savedCourses.get(0).getCourseId())
+                         .build()));
 
         AttendanceRecordDto recordDto = new AttendanceRecordDto();
         recordDto.setStudentId(enrollments.getFirst().getStudentId());
@@ -134,7 +169,10 @@ class AttendanceRecordServiceImplTest {
         recordDto1.setDate(LocalDate.of(2025, 12, 19));
         recordDto1.setStatus(Status.PRESENT);
 
+        assertEquals(0, attendanceRecordRepository.findAll().size());
         attendanceRecordServiceImpl.saveAllAttendanceRecords(List.of(recordDto, recordDto1));
+        assertEquals(2, attendanceRecordRepository.findAll().size());
+
         AttendanceRecordDto dto = attendanceRecordServiceImpl.getStudentAttendance(enrollments.getFirst().getStudentId(),
                 enrollments.getFirst().getCourseId());
 

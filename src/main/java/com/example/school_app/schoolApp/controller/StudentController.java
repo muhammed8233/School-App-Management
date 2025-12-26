@@ -10,7 +10,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class StudentController {
 
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<StudentDto> register(@ModelAttribute @Valid StudentDto dto) throws IOException {
-        return new ResponseEntity<>(studentService.addNewStudent(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(studentService.registerStudent(dto), HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -39,7 +38,7 @@ public class StudentController {
     }
 
     @PostMapping("/bulk-register")
-    public ResponseEntity<List<StudentDto>> registerMultipleStudents(@RequestBody List<StudentDto> dtos) {
+    public ResponseEntity<List<StudentDto>> registerMultipleStudents(@RequestBody List<StudentDto> dtos) throws IOException {
         List<StudentDto> savedStudents = studentService.saveAllStudents(dtos);
         return new ResponseEntity<>(savedStudents, HttpStatus.CREATED);
     }

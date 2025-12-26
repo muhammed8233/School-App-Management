@@ -8,8 +8,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -39,12 +42,23 @@ class GradeServiceImplTest {
 
 
     @Test
-    void testToRecordStudentGradeInACourse() {
-        List<StudentDto> savedStudent = studentServiceImpl.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1")));
-        List<CourseDto> savedCourse = courseServiceImpl.saveAllCourses(List.of(new CourseDto("physics", "phy101")));
+    void testToRecordStudentGradeInACourse() throws IOException {
+        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+
+        List<StudentDto> savedStudent = studentServiceImpl.saveAllStudents(List.of(StudentDto.builder()
+                .name("musa")
+                .email("musa@gmail.com").className("ss1")
+                .profileImage(image).build()));
+
+        List<CourseDto> savedCourse = courseServiceImpl.saveAllCourses(List.of( CourseDto.builder()
+                .courseName("physics")
+                .courseCode("phy101").build()));
 
         List<EnrollmentDto> enrollmentRequests = List.of(
-                new EnrollmentDto(savedStudent.get(0).getStudentId(), savedCourse.get(0).getCourseId()));
+                EnrollmentDto.builder()
+                        .studentId(savedStudent.get(0).getStudentId())
+                        .courseId(savedCourse.get(0).getCourseId())
+                        .build());
 
         List<EnrollmentDto> enrollmentDtoList = enrollmentServiceImpl.saveAllEnrollments(enrollmentRequests);
 
@@ -60,46 +74,87 @@ class GradeServiceImplTest {
 
     }
 
-    @Transactional
     @Test
-    void testToGetAllStudentScoreInACourse(){
-        List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1")));
-        List<CourseDto> savedCourses = courseServiceImpl.saveAllCourses(List.of(new CourseDto("physics", "phy101")));
+    void testToGetAllStudentScoreInACourse() throws IOException{
+        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+
+        List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(  StudentDto.builder()
+                .name("musa")
+                .email("musa@gmail.com").className("ss1")
+                .profileImage(image).build()));
+
+        List<CourseDto> savedCourses = courseServiceImpl.saveAllCourses(List.of( CourseDto.builder()
+                .courseName("physics")
+                .courseCode("phy101").build()));
+
         List<EnrollmentDto> enrollments = enrollmentServiceImpl.saveAllEnrollments(List.of(
-                new EnrollmentDto(savedStudents.get(0).getStudentId(), savedCourses.get(0).getCourseId())));
+                EnrollmentDto.builder()
+                        .studentId(savedStudents.get(0).getStudentId())
+                        .courseId(savedCourses.get(0).getCourseId())
+                        .build()));
 
+        assertEquals(0,gradeRepository.findAll().size());
         gradeServiceImpl.saveAllGrades(List.of(
-                new GradeDto(enrollments.get(0).getStudentId(), enrollments.get(0).getCourseId(), Assessment.TEST, 50.0),
-                new GradeDto(enrollments.get(0).getStudentId(), enrollments.get(0).getCourseId(), Assessment.EXAM, 90.0),
-                new GradeDto(enrollments.get(0).getStudentId(), enrollments.get(0).getCourseId(), Assessment.ASSIGNMENT, 20.0)
+                 GradeDto.builder()
+                         .studentId(enrollments.get(0).getStudentId())
+                         .courseId(enrollments.get(0).getCourseId())
+                         .assessmentType(Assessment.TEST)
+                         .score(50.0).build(),
+                GradeDto.builder()
+                        .studentId(enrollments.get(0).getStudentId())
+                        .courseId(enrollments.get(0).getCourseId())
+                        .assessmentType(Assessment.EXAM)
+                        .score(90.0).build(),
+                GradeDto.builder()
+                        .studentId(enrollments.get(0).getStudentId())
+                        .courseId(enrollments.get(0).getCourseId())
+                        .assessmentType(Assessment.ASSIGNMENT)
+                        .score(20.0).build()
         ));
-
+        assertEquals(3, gradeRepository.findAll().size());
        ScoreDto  result = gradeServiceImpl.getStudentScoreInCourse(enrollments.getFirst().getStudentId(), enrollments.getFirst().getCourseId());
 
        assertNotNull(result);
        assertEquals(74.0, result.getFinalScore());
     }
 
-    @Transactional
     @Test
-    void testToComputeFinalScoreForStudent() {
+    void testToComputeFinalScoreForStudent() throws IOException{
+        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
 
-        List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(new StudentDto("musa", "musa@gmail.com", "ss1")));
-        List<CourseDto> savedCourses = courseServiceImpl.saveAllCourses(List.of(new CourseDto("physics", "phy101")));
+        List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(  StudentDto.builder()
+                .name("musa")
+                .email("musa@gmail.com").className("ss1")
+                .profileImage(image).build()));
+
+        List<CourseDto> savedCourses = courseServiceImpl.saveAllCourses(List.of( CourseDto.builder()
+                .courseName("physics")
+                .courseCode("phy101").build()));
+
         List<EnrollmentDto> enrollments = enrollmentServiceImpl.saveAllEnrollments(List.of(
-                new EnrollmentDto(savedStudents.get(0).getStudentId(), savedCourses.get(0).getCourseId())));
+                EnrollmentDto.builder()
+                        .studentId(savedStudents.get(0).getStudentId())
+                        .courseId(savedCourses.get(0).getCourseId())
+                        .build()));
 
+        assertEquals(0, gradeRepository.findAll().size());
         gradeServiceImpl.saveAllGrades(List.of(
-                new GradeDto(savedStudents.get(0).getStudentId(), savedCourses.get(0).getCourseId(), Assessment.TEST, 50.0),
-                new GradeDto(savedStudents.get(0).getStudentId(), savedCourses.get(0).getCourseId(), Assessment.EXAM, 90.0)
+                GradeDto.builder()
+                        .studentId(enrollments.get(0).getStudentId())
+                        .courseId(enrollments.get(0).getCourseId())
+                        .assessmentType(Assessment.TEST)
+                        .score(50.0).build(),
+                GradeDto.builder()
+                        .studentId(enrollments.get(0).getStudentId())
+                        .courseId(enrollments.get(0).getCourseId())
+                        .assessmentType(Assessment.EXAM)
+                        .score(90.0).build()
         ));
-
+        assertEquals(2, gradeRepository.findAll().size());
 
         double result = gradeServiceImpl.computeFinalScore(enrollments.get(0).getEnrollmentId());
 
         assertNotNull(result);
         assertEquals(74.0, result, 0.01);
     }
-
-
 }

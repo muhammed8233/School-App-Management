@@ -10,12 +10,12 @@ import java.util.List;
 
 public interface StudentService { ;
 
-    StudentDto addNewStudent(@Valid  StudentDto studentDTO) throws IOException;
+    StudentDto registerStudent(@Valid  StudentDto studentDTO) throws IOException;
 
     List<StudentDto> getStudents();
 
     @Transactional
-    List<StudentDto> saveAllStudents(List<StudentDto> studentDto);
+    List<StudentDto> saveAllStudents(List<StudentDto> studentDto) throws IOException;
 
     Student getStudentById(Long studentId);
 

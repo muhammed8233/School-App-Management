@@ -2,8 +2,14 @@ package com.example.school_app.schoolApp.model;
 
 import com.example.school_app.schoolApp.Enum.Assessment;
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Grade {
     @Id
     @GeneratedValue(
@@ -18,49 +24,6 @@ public class Grade {
     @Enumerated(EnumType.STRING)
     private Assessment assessmentType;
     private double score;
-
-    public Grade(Enrollment enrollment, Assessment assessmentType, double score) {
-        this.enrollment = enrollment;
-        this.assessmentType = assessmentType;
-        this.score = score;
-    }
-
-    public Grade() {
-
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Enrollment getEnrollment() {
-        return enrollment;
-    }
-
-    public void setEnrollment(Enrollment enrollment) {
-        this.enrollment = enrollment;
-    }
-
-    public Assessment getAssessmentType() {
-        return assessmentType;
-    }
-
-    public void setAssessmentType(Assessment assessmentType) {
-        this.assessmentType = assessmentType;
-    }
-
-    public double getScore() {
-        return score;
-    }
-
-    public void setScore(double score) {
-        this.score = score;
-
-    }
 
     @Override
     public String toString() {

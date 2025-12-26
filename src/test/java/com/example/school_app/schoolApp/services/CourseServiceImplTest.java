@@ -35,23 +35,37 @@ class CourseServiceImplTest {
 
     @Test
     void testToVerifyCourse(){
-        CourseDto courseDto = new CourseDto("physic","phy101");
+        CourseDto courseDto = CourseDto.builder()
+                .courseName("physics")
+                .courseCode("phy101").build();
+
+        assertEquals(0, courseRepository.findAll().size());
          courseServiceImpl.addNewCourse(courseDto);
+         assertEquals(1, courseRepository.findAll().size());
          List<CourseDto> courses = courseServiceImpl.getAllCoursesAsDto();
 
 
         assertNotNull(courses);
-        assertEquals("physic", courses.getFirst().getCourseName());
+        assertEquals("physics", courses.getFirst().getCourseName());
         assertEquals("phy101", courses.getFirst().getCourseCode());
 
     }
 
     @Test
     void testViewAllCourse(){
-        CourseDto course = new CourseDto("chemistry","chm101");
-        CourseDto course1 = new CourseDto("physics","phy101");
-        CourseDto course2 = new CourseDto( "biology","bio101");
+        CourseDto course = CourseDto.builder()
+                .courseName("chemistry")
+                .courseCode("chm01").build();
+        CourseDto course1 = CourseDto.builder()
+                .courseName("physics")
+                .courseCode("phy101").build();
+        CourseDto course2 = CourseDto.builder()
+                .courseName("Biology ")
+                .courseCode("bio101").build();
+
+        assertEquals(0, courseRepository.findAll().size());
         courseServiceImpl.saveAllCourses(List.of(course, course1, course2));
+        assertEquals(3, courseRepository.findAll().size());
 
         List<CourseDto> result = courseServiceImpl.getStudentCourse();
 
@@ -65,7 +79,9 @@ class CourseServiceImplTest {
 
     @Test
     void shouldThrowExceptionWhenNameIsBlank() {
-        CourseDto invalidDto = new CourseDto(" ", "phy101");
+        CourseDto invalidDto = CourseDto.builder()
+                .courseName(" ")
+                .courseCode("phy101").build();
 
         assertThrows(CourseNotFoundException.class, () -> {
             courseServiceImpl.addNewCourse(invalidDto);});

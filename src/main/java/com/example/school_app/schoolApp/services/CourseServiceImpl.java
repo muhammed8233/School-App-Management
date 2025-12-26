@@ -74,7 +74,10 @@ public class CourseServiceImpl implements CourseService {
             if(courseRepository.existsByCourseCode(dto.getCourseCode())){
                 throw new CourseAlreadyExistException("course already exist");
             }
-            Course course = new Course(dto.getCourseName(), dto.getCourseCode());
+            Course course = Course.builder()
+                    .courseName(dto.getCourseName())
+                    .courseCode(dto.getCourseCode())
+                    .build();
             courses.add(course);
         }
 
@@ -98,16 +101,16 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new CourseNotFoundException("Course with Id " + id + " not found"));
     }
 
-    public String findCourseCodeById(Long id) {
-        return getCourseById(id).getCourseCode();
-    }
-
     @Override
     public List<CourseDto> getAllCoursesAsDto() {
         List<Course> courses = courseRepository.findAll();
         List<CourseDto> courseDto = new ArrayList<>();
         for (Course course : courses) {
-            courseDto.add(new CourseDto(course.getCourseName(), course.getCourseCode()));
+            courseDto.add(CourseDto.builder()
+                    .courseId(course.getId())
+                    .courseName(course.getCourseName())
+                    .courseCode(course.getCourseCode())
+                    .build());
         }
 
         return courseDto;
