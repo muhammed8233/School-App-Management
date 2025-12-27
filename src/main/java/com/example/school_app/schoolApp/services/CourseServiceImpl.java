@@ -14,6 +14,7 @@ import java.util.List;
 
 
 @Service
+@Transactional
 public class CourseServiceImpl implements CourseService {
     @Autowired
     private final CourseRepository courseRepository;
@@ -62,7 +63,6 @@ public class CourseServiceImpl implements CourseService {
        return courseDto1;
     }
 
-    @Transactional
     @Override
     public List<CourseDto> saveAllCourses(List<CourseDto> courseDtoList) {
         if (courseDtoList == null || courseDtoList.isEmpty()) {

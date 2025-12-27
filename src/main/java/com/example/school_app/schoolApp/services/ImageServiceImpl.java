@@ -37,10 +37,5 @@ public class ImageServiceImpl implements ImageService {
             return "default_image_url";
         }
     }
-
-    @Override
-    public void deleteImage(String publicId) throws IOException {
-        cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-    }
 }
 

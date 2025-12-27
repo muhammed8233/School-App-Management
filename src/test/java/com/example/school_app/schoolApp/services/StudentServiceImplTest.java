@@ -97,5 +97,4 @@ class StudentServiceImplTest {
         assertNotNull(result.get(1).getStudentId());
 
     }
-
 }

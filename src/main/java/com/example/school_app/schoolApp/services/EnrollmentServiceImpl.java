@@ -32,7 +32,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         this.courseServiceImpl = courseServiceImpl;
     }
 
-    @Transactional
     @Override
     public EnrollmentDto enrollStudentInCourse(Long studentId, Long courseId) {
         Student student = studentServiceImpl.getStudentById(studentId);
@@ -105,7 +104,6 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         return enrollmentDto;
     }
 
-    @Transactional
     @Override
     public List<EnrollmentDto> saveAllEnrollments(List<EnrollmentDto> enrollmentDtoList) {
         if (enrollmentDtoList == null || enrollmentDtoList.isEmpty()) {

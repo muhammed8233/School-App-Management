@@ -20,6 +20,7 @@ import java.util.List;
 
 
 @Service
+@Transactional
 public class AttendanceRecordServiceImpl implements AttendanceRecordService {
 
     @Autowired
@@ -95,7 +96,6 @@ public class AttendanceRecordServiceImpl implements AttendanceRecordService {
        return recordDto;
     }
 
-    @Transactional
     @Override
     public List<AttendanceRecordDto> saveAllAttendanceRecords(List<AttendanceRecordDto> attendanceRecordDtoList) {
         if (attendanceRecordDtoList == null || attendanceRecordDtoList.isEmpty()) {

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class StudentServiceImpl implements StudentService {
     @Autowired
     private final StudentRepository studentRepository;
@@ -26,7 +27,7 @@ public class StudentServiceImpl implements StudentService {
         this.imageServiceImpl = imageServiceImpl;
     }
 
-    @Transactional
+
     @Override
     public StudentDto registerStudent(StudentDto studentDto) throws IOException {
         boolean exists = studentRepository.existsByEmail(studentDto.getEmail());
@@ -73,7 +74,6 @@ public class StudentServiceImpl implements StudentService {
         return studentDto;
     }
 
-    @Transactional
     @Override
     public List<StudentDto> saveAllStudents(List<StudentDto> studentDto) throws IOException {
         if(studentDto == null || studentDto.isEmpty() ){

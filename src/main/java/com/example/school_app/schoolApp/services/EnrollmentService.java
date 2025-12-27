@@ -16,9 +16,7 @@ public interface EnrollmentService {
 
     List<EnrollmentDto> getStudentsByACourse(Long courseId);
 
-    @Transactional
     List<EnrollmentDto> saveAllEnrollments(List<EnrollmentDto> enrollmentDto);
-
 
     List<EnrollmentDto> getCourseByStudent(Long studentId);
 

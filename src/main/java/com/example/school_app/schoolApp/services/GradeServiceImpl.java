@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class GradeServiceImpl implements GradeService {
 
     @Autowired private final GradeRepository gradeRepository;
@@ -107,7 +108,6 @@ public class GradeServiceImpl implements GradeService {
         return result;
     }
 
-    @Transactional
     @Override
     public List<GradeDto> saveAllGrades(List<GradeDto> gradeRequests) {
         if (gradeRequests == null || gradeRequests.isEmpty()) {

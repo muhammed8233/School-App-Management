@@ -45,7 +45,7 @@ class AttendanceRecordServiceImplTest {
         attendanceRecordRepository.deleteAll();
     }
 
-    @Transactional
+
     @Test
     void testMarkStudentAttendance() throws IOException {
         LocalDate testDate = LocalDate.of(2025, 12, 18);
@@ -84,7 +84,6 @@ class AttendanceRecordServiceImplTest {
         assertEquals(testDate, recordDto.getDate());
     }
 
-    @Transactional
     @Test
     void testToSaveAllAttendanceRecords() throws IOException{
         LocalDate testDate = LocalDate.of(2025, 12, 21);

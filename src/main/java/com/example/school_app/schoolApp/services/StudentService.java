@@ -14,7 +14,6 @@ public interface StudentService { ;
 
     List<StudentDto> getStudents();
 
-    @Transactional
     List<StudentDto> saveAllStudents(List<StudentDto> studentDto) throws IOException;
 
     Student getStudentById(Long studentId);
