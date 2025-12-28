@@ -37,8 +37,8 @@ class StudentServiceImplTest {
 
     @Test
     void testToVerifyRegisterStudent() throws IOException {
-        MockMultipartFile image = new MockMultipartFile(
-                "profileImage", "test.jpg", "image/jpeg", "test data".getBytes());
+        MockMultipartFile image = new MockMultipartFile("profileImage",
+                "test.jpg", "image/jpeg", "test data".getBytes());
 
         StudentDto studentDto = StudentDto.builder()
                 .name("bala")
@@ -74,8 +74,10 @@ class StudentServiceImplTest {
 
     @Test
     void testToViewAllStudent() throws IOException{
-        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
-        MultipartFile image1 = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+        MultipartFile image = new MockMultipartFile("img",
+                "img.jpg", "image/jpg", "data".getBytes());
+        MultipartFile image1 = new MockMultipartFile("img",
+                "img.jpg", "image/jpg", "data".getBytes());
 
         StudentDto student = StudentDto.builder()
                 .name("musa")

@@ -49,19 +49,20 @@ class AttendanceRecordServiceImplTest {
     @Test
     void testMarkStudentAttendance() throws IOException {
         LocalDate testDate = LocalDate.of(2025, 12, 18);
-        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+        MultipartFile image = new MockMultipartFile("img",
+                "img.jpg", "image/jpg", "data".getBytes());
 
 
         StudentDto musa = studentServiceImpl.saveAllStudents(List.of(
                 StudentDto.builder()
                         .name("musa")
                         .email("musa@gmail.com").className("ss1")
-                        .profileImage(image).build())).get(0);
+                        .profileImage(image).build())).getFirst();
 
         CourseDto physics = courseServiceImpl.saveAllCourses(List.of(
                  CourseDto.builder()
                          .courseName("physics")
-                         .courseCode("phy101").build())).get(0);
+                         .courseCode("phy101").build())).getFirst();
 
         EnrollmentDto enrollment = new EnrollmentDto();
         enrollment.setCourseId(physics.getCourseId());
@@ -88,7 +89,8 @@ class AttendanceRecordServiceImplTest {
     void testToSaveAllAttendanceRecords() throws IOException{
         LocalDate testDate = LocalDate.of(2025, 12, 21);
         LocalDate testDate1 = LocalDate.of(2025, 12, 22);
-        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+        MultipartFile image = new MockMultipartFile("img",
+                "img.jpg", "image/jpg", "data".getBytes());
 
 
         StudentDto savedStudents = studentServiceImpl.saveAllStudents(List.of(
@@ -97,13 +99,13 @@ class AttendanceRecordServiceImplTest {
                         .email("abel@gmail.com")
                         .className("ss1")
                         .profileImage(image)
-                        .build())).get(0);
+                        .build())).getFirst();
 
         CourseDto savedCourses = courseServiceImpl.saveAllCourses(List.of(
                  CourseDto.builder()
                          .courseName("physics")
                          .courseCode("phy101")
-                         .build())).get(0);
+                         .build())).getFirst();
 
         EnrollmentDto enrollmentDto = new EnrollmentDto();
         enrollmentDto.setStudentId(savedStudents.getStudentId());
@@ -124,7 +126,8 @@ class AttendanceRecordServiceImplTest {
         recordDto1.setStatus(Status.PRESENT);
 
         assertEquals(0, attendanceRecordRepository.findAll().size());
-        List<AttendanceRecordDto> dto = attendanceRecordServiceImpl.saveAllAttendanceRecords(List.of(recordDto, recordDto1));
+        List<AttendanceRecordDto> dto = attendanceRecordServiceImpl.
+                saveAllAttendanceRecords(List.of(recordDto, recordDto1));
         assertEquals(2, attendanceRecordRepository.findAll().size());
 
         assertNotNull(dto);
@@ -137,7 +140,8 @@ class AttendanceRecordServiceImplTest {
 
     @Test
     void testToGetAllStudentAttendanceRecord() throws IOException {
-        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+        MultipartFile image = new MockMultipartFile("img",
+                "img.jpg", "image/jpg", "data".getBytes());
 
         List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(StudentDto.builder()
                 .name("musa")
@@ -152,8 +156,8 @@ class AttendanceRecordServiceImplTest {
 
         List<EnrollmentDto> enrollments = enrollmentServiceImpl.saveAllEnrollments(List.of(
                  EnrollmentDto.builder()
-                         .studentId(savedStudents.get(0).getStudentId())
-                         .courseId(savedCourses.get(0).getCourseId())
+                         .studentId(savedStudents.getFirst().getStudentId())
+                         .courseId(savedCourses.getFirst().getCourseId())
                          .build()));
 
         AttendanceRecordDto recordDto = new AttendanceRecordDto();
@@ -172,7 +176,8 @@ class AttendanceRecordServiceImplTest {
         attendanceRecordServiceImpl.saveAllAttendanceRecords(List.of(recordDto, recordDto1));
         assertEquals(2, attendanceRecordRepository.findAll().size());
 
-        AttendanceRecordDto dto = attendanceRecordServiceImpl.getStudentAttendance(enrollments.getFirst().getStudentId(),
+        AttendanceRecordDto dto = attendanceRecordServiceImpl
+                .getStudentAttendance(enrollments.getFirst().getStudentId(),
                 enrollments.getFirst().getCourseId());
 
         assertNotNull(dto);

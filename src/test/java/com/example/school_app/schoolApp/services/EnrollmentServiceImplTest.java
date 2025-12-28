@@ -35,16 +35,17 @@ class EnrollmentServiceImplTest {
 
     @Test
     void testToEnrollStudentInACourse() throws IOException {
-        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+        MultipartFile image = new MockMultipartFile("img",
+                "img.jpg", "image/jpg", "data".getBytes());
 
         StudentDto savedStudent = studentServiceImpl.saveAllStudents(List.of(StudentDto.builder()
                 .name("musa")
                 .email("musa@gmail.com").className("ss1")
-                .profileImage(image).build())).get(0);
+                .profileImage(image).build())).getFirst();
 
         CourseDto savedCourse = courseServiceImpl.saveAllCourses(List.of(CourseDto.builder()
                 .courseName("physics")
-                .courseCode("phy101").build())).get(0);
+                .courseCode("phy101").build())).getFirst();
 
         assertEquals(0, enrollmentRepository.findAll().size());
         enrollmentServiceImpl.enrollStudentInCourse(savedStudent.getStudentId(), savedCourse.getCourseId());
@@ -54,14 +55,16 @@ class EnrollmentServiceImplTest {
 
         assertNotNull(enrollments);
         assertEquals(1, enrollments.size());
-        assertEquals(savedStudent.getStudentId(), enrollments.get(0).getStudentId());
-        assertEquals(savedCourse.getCourseId(), enrollments.get(0).getCourseId());
+        assertEquals(savedStudent.getStudentId(), enrollments.getFirst().getStudentId());
+        assertEquals(savedCourse.getCourseId(), enrollments.getFirst().getCourseId());
     }
 
     @Test
     void testToGetAllCourseForAStudent() throws IOException {
-        MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
-        MultipartFile image1 = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+        MultipartFile image = new MockMultipartFile("img",
+                "img.jpg", "image/jpg", "data".getBytes());
+        MultipartFile image1 = new MockMultipartFile("img",
+                "img.jpg", "image/jpg", "data".getBytes());
 
         List<StudentDto> savedStudents = studentServiceImpl.saveAllStudents(List.of(
                 StudentDto.builder()
@@ -82,7 +85,7 @@ class EnrollmentServiceImplTest {
                                 .courseCode("chm101").build()));
 
 
-        Long student1Id = savedStudents.get(0).getStudentId();
+        Long student1Id = savedStudents.getFirst().getStudentId();
         Long course1Id = savedCourses.get(0).getCourseId();
         Long course2Id = savedCourses.get(1).getCourseId();
 
@@ -109,8 +112,10 @@ class EnrollmentServiceImplTest {
 
      @Test
      void testToGetAllEnrollment() throws IOException{
-         MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
-         MultipartFile image1 = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+         MultipartFile image = new MockMultipartFile("img",
+                 "img.jpg", "image/jpg", "data".getBytes());
+         MultipartFile image1 = new MockMultipartFile("img",
+                 "img.jpg", "image/jpg", "data".getBytes());
 
          List <StudentDto> savedStudent = studentServiceImpl.saveAllStudents(List.of(
                  StudentDto.builder()
@@ -132,7 +137,7 @@ class EnrollmentServiceImplTest {
 
 
          EnrollmentDto enrollmentDto = new EnrollmentDto();
-         enrollmentDto.setCourseId(savedCourse.get(0).getCourseId());
+         enrollmentDto.setCourseId(savedCourse.getFirst().getCourseId());
          enrollmentDto.setStudentId(savedStudent.get(0).getStudentId());
 
          EnrollmentDto enrollmentDto1 = new EnrollmentDto();
@@ -149,22 +154,24 @@ class EnrollmentServiceImplTest {
      }
      @Test
      void testToGetAllStudentByACourse() throws IOException{
-         MultipartFile image = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
-         MultipartFile image1 = new MockMultipartFile("img", "img.jpg", "image/jpg", "data".getBytes());
+         MultipartFile image = new MockMultipartFile("img",
+                 "img.jpg", "image/jpg", "data".getBytes());
+         MultipartFile image1 = new MockMultipartFile("img",
+                 "img.jpg", "image/jpg", "data".getBytes());
 
          StudentDto studentDto = studentServiceImpl.saveAllStudents(List.of(StudentDto.builder()
                  .name("musa")
                  .email("musa@gmail.com").className("ss1")
-                 .profileImage(image).build())).get(0);
+                 .profileImage(image).build())).getFirst();
 
          CourseDto courseDto = courseServiceImpl.saveAllCourses(List.of( CourseDto.builder()
                  .courseName("physics")
-                 .courseCode("phy101").build())).get(0);
+                 .courseCode("phy101").build())).getFirst();
 
          StudentDto studentDto2 = studentServiceImpl.saveAllStudents(List.of(StudentDto.builder()
                  .name("yahaya")
                  .email("yahaya@gmail.com").className("ss1")
-                 .profileImage(image1).build())).get(0);
+                 .profileImage(image1).build())).getFirst();
 
          EnrollmentDto enrollment = new EnrollmentDto();
          enrollment.setCourseId(courseDto.getCourseId());
@@ -183,6 +190,6 @@ class EnrollmentServiceImplTest {
          assertNotNull(result);
          System.out.println(result);
          assertEquals(2, result.size());
-         assertEquals(studentDto.getStudentId(), result.get(0).getStudentId());
+         assertEquals(studentDto.getStudentId(), result.getFirst().getStudentId());
      }
 }
