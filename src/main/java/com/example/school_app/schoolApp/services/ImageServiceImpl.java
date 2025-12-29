@@ -21,21 +21,18 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
-    public String uploadImage(MultipartFile file, String folderName) {
-        try {
-            if (file == null || file.isEmpty()) {
-                throw new ImageNotFoundException("Cannot upload an empty file");
-            }
-
-            Map options = ObjectUtils.asMap("folder", folderName,
-                    "overwrite", true, "resource_type", "auto");
-
-            Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
-
-            return (String) uploadResult.get("secure_url");
-        } catch (Exception e) {
-            return "default_image_url";
+    public String uploadImage(MultipartFile file, String folderName)throws IOException {
+        if (file == null || file.isEmpty()) {
+            throw new ImageNotFoundException("Cannot upload an empty file");
         }
+
+        Map options = ObjectUtils.asMap("folder", folderName,
+                "overwrite", true, "resource_type", "auto");
+
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
+
+        return (String) uploadResult.get("secure_url");
+
     }
 }
 

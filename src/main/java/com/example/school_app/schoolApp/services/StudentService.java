@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface StudentService { ;
 
-    StudentDto registerStudent(@Valid  StudentDto studentDTO) throws IOException;
+    StudentDto registerStudent(StudentDto studentDTO) throws IOException;
 
     List<StudentDto> getStudents();
 
